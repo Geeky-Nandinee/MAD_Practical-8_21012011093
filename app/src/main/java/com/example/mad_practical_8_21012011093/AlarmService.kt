@@ -22,7 +22,6 @@ class AlarmService : Service() {
 
     override fun onDestroy() {
         player.stop()
-        player.release()
         super.onDestroy()
     }
 }

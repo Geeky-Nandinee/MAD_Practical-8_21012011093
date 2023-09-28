@@ -24,8 +24,8 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        val ALARMKEY = "alarm"
-        val ALARMSTART = "start"
-        val ALARMSTOP = "stop"
+        val ALARMKEY = "KEY"
+        val ALARMSTART = "START"
+        val ALARMSTOP = "STOP"
     }
 }

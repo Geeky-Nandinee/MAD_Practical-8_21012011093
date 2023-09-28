@@ -19,7 +19,6 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:text="@string/app_name"
-
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -132,15 +131,17 @@
                             android:textAppearance="?attr/textAppearanceHeadline6" />
 
 
-                        <TextClock
-                            android:id="@+id/clocktime2"
-                            android:format12Hour="hh:mm:ss a MMM dd yyyy"
+                        <TextView
+                            android:id="@+id/textAlarmTime"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_margin="20dp"
                             android:padding="10dp"
-                            android:textAlignment="center"/>
+                            android:textAlignment="center"
+                            android:textColor="@color/black"
+                            android:textSize="20sp"
+                            android:textStyle="bold"/>
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/CancelBtn"

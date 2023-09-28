@@ -7,61 +7,74 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.TimePicker
+import android.widget.TextView
+import android.widget.Toast
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
-import java.sql.Time
+import java.text.SimpleDateFormat
 import java.util.Calendar
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val card= findViewById<MaterialCardView>(R.id.card2)
-        val alarmbutton=findViewById<Button>(R.id.CreateBtn)
-        card.visibility=View.GONE
-        alarmbutton.setOnClickListener {
-            card.visibility=View.VISIBLE
-            TimePickerDialog(this,{tp,hour,minute->setalarmtime(hour, minute)},Calendar.HOUR,Calendar.MINUTE,false).show()
 
+        val addAlarm : MaterialButton = findViewById(R.id.CreateBtn)
+
+        val card : MaterialCardView = findViewById(R.id.card2)
+
+        card.visibility = View.GONE
+
+        addAlarm.setOnClickListener {
+            TimePickerDialog(this, {tp, hour, minute -> setAlarmTime(hour, minute)}, Calendar.HOUR,Calendar.MINUTE,false).show()
+            TimePickerDialog(this, { tp, hour, minute -> sendDialogDataToActivity(hour, minute) }, Calendar.HOUR, Calendar.MINUTE, false).show()
+            card.visibility = View.VISIBLE
         }
-        //pass current time hour and minute
-        //visible 2nd card view
-        //simpledatetimeformate
-        //cancel button alarm shoud stop and card2 should hide
 
+        val cancelAlarm : MaterialButton = findViewById(R.id.CancelBtn)
+        cancelAlarm.setOnClickListener {
+            stop()
+            card.visibility = View.GONE
+        }
     }
-
-    fun setalarmtime(hour:Int,minute:Int){
-    val alarmtime = Calendar.getInstance()
-        val year= alarmtime.get(Calendar.YEAR)
-        val month = alarmtime.get(Calendar.MONTH)
-        val date = alarmtime.get(Calendar.DATE)
-        alarmtime.set(year, month, date,hour,minute)
-        setalarm(alarmtime.timeInMillis,AlarmBroadcastReceiver.ALARMSTART)
+    fun setAlarmTime(hour : Int, minute : Int){
+        val alarmTime = Calendar.getInstance()
+        val year = alarmTime.get(Calendar.YEAR)
+        val month = alarmTime.get(Calendar.MONTH)
+        val date = alarmTime.get(Calendar.DATE)
+        alarmTime.set(year, month, date, hour, minute, 0)
+        setAlarm(alarmTime.timeInMillis, AlarmBroadcastReceiver.ALARMSTART)
     }
-
     fun stop(){
-        setalarm(-1,AlarmBroadcastReceiver.ALARMSTOP)
+        setAlarm(-1,AlarmBroadcastReceiver.ALARMSTOP)
     }
-    fun setalarm(militime:Long,action:String) {
+    fun setAlarm(millitime : Long, action : String) {
         val intentalarm = Intent(applicationContext, AlarmBroadcastReceiver::class.java)
         intentalarm.putExtra(AlarmBroadcastReceiver.ALARMKEY,action)
-        val pendingIntent = PendingIntent.getBroadcast(
-            applicationContext,
-            4356,
-            intentalarm,
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
-        val alarmmanager = getSystemService(ALARM_SERVICE) as AlarmManager
-        if (action == AlarmBroadcastReceiver.ALARMSTART) {
-            alarmmanager.setExact(AlarmManager.RTC_WAKEUP, militime, pendingIntent)
+        val pendingintent = PendingIntent.getBroadcast(applicationContext,4356,intentalarm,PendingIntent.FLAG_UPDATE_CURRENT)
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        if(action == AlarmBroadcastReceiver.ALARMSTART){
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP,millitime,pendingintent)
         }
-        else if (action == AlarmBroadcastReceiver.ALARMSTOP) {
-            alarmmanager.cancel(pendingIntent)
+        else if(action == AlarmBroadcastReceiver.ALARMSTOP){
+            alarmManager.cancel(pendingintent)
             sendBroadcast(intentalarm)
         }
-
+    }
+    private fun sendDialogDataToActivity(hour: Int, minute: Int){
+        val textAlarmTime : TextView = findViewById(R.id.textAlarmTime)
+        val alarmCalendar = Calendar.getInstance()
+        val year: Int = alarmCalendar.get(Calendar.YEAR)
+        val month: Int = alarmCalendar.get(Calendar.MONTH)
+        val day: Int = alarmCalendar.get(Calendar.DATE)
+        alarmCalendar.set(year, month, day, hour, minute, 0)
+        textAlarmTime.text = SimpleDateFormat("hh:mm:ss a").format(alarmCalendar.time)
+        setAlarm(alarmCalendar.timeInMillis,"Start")
+        Toast.makeText(
+            this,
+            "Time: hours:${hour}, minutes:${minute}," +
+                    "millis:${alarmCalendar.timeInMillis}",
+            Toast.LENGTH_LONG
+        ).show()
     }
 }
