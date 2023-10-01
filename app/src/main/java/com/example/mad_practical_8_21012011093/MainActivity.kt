@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
         val addAlarm : MaterialButton = findViewById(R.id.CreateBtn)
 
-        val card : MaterialCardView = findViewById(R.id.card2   )
+        val card : MaterialCardView = findViewById(R.id.card2)
 
         card.visibility = View.GONE
 
