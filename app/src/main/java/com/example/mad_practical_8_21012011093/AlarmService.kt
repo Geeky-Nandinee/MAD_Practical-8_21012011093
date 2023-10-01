@@ -9,7 +9,7 @@ class AlarmService : Service() {
     lateinit var player: MediaPlayer
 
         override fun onBind(intent: Intent): IBinder? {
-            TODO()
+            return null
         }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
